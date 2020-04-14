@@ -1,9 +1,8 @@
 package dto;
 
-import javax.persistence.GeneratedValue;
-import javax.validation.constraints.*;
+import java.io.Serializable;
 
-public class DriverDTO {
+public class DriverDTO implements Serializable {
 
     private int driverId;
 

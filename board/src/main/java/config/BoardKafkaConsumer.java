@@ -1,14 +1,13 @@
 package config;
 
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -37,49 +36,55 @@ public class BoardKafkaConsumer {
     }
 
 
-    public ConsumerRecords<Long, String> runConsumerAndGetMsg() {
+    public List<String> runConsumerAndGetMsg() {
+
         final Consumer<Long, String> consumer = createConsumer();
         final int giveUp = 100;
         int noRecordsCount = 0;
-
-        final ConsumerRecords<Long, String> consumerRecords =
-                consumer.poll(1000);
-
-        consumerRecords.forEach(record -> {
-            System.out.printf("Consumer Record:(%s, %d, %d)\n",
-                    record.value(),
-                    record.partition(), record.offset());
-        });
-        consumer.commitAsync();
-        consumer.close();
-        return consumerRecords;
-
-//        while (true) {
+        List<String> driverJSONList = new ArrayList<>();
+//
 //        final ConsumerRecords<Long, String> consumerRecords =
 //                consumer.poll(1000);
-//            if (consumerRecords.count()==0) {
-//                noRecordsCount++;
-//                if (noRecordsCount > giveUp) break;
-//                else continue;
-//            }
+//
 //        consumerRecords.forEach(record -> {
 //            System.out.printf("Consumer Record:(%s, %d, %d)\n",
 //                    record.value(),
 //                    record.partition(), record.offset());
 //        });
 //        consumer.commitAsync();
-//        return consumerRecords;
-//        }
 //        consumer.close();
-//        System.out.println("DONE");
-//        return null;
+//        return consumerRecords;
+
+        while (true) {
+        final ConsumerRecords<Long, String> consumerRecords =
+                consumer.poll(100);
+            if (consumerRecords.count()==0) {
+                noRecordsCount++;
+                if (noRecordsCount > giveUp) break;
+                else continue;
+            }
+        consumerRecords.forEach(record -> {
+            System.out.printf("Consumer Record:(%s, %d, %d)\n",
+                    record.value(),
+                    record.partition(), record.offset());
+        });
+        consumer.commitAsync();
+        for(ConsumerRecord<Long, String> consumerRecord: consumerRecords){
+            driverJSONList.add(consumerRecord.value());
+        }
+        return driverJSONList;
+
+        }
+        consumer.close();
+        System.out.println("DONE");
+        return driverJSONList;
     }
 
-//
-//    public static void main(String... args) throws Exception {
-//        BoardKafkaConsumer boardKafkaConsumer = new BoardKafkaConsumer();
-//        boardKafkaConsumer.runConsumerAndGetMsg();
-//    }
+
+    public static void main(String... args) throws Exception {
+        BoardKafkaConsumer boardKafkaConsumer = new BoardKafkaConsumer();
+        boardKafkaConsumer.runConsumerAndGetMsg();
+    }
 
 
 }

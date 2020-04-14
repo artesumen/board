@@ -2,10 +2,10 @@ package service;
 
 import dto.DriverDTO;
 
-import javax.ejb.Local;
+import javax.ejb.Remote;
 import java.util.List;
 
-@Local
+@Remote
 public interface DriverUpdateSessionRemote{
     List<DriverDTO> getSavedDriver();
 }
