@@ -44,6 +44,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>fish.payara.cloud.connectors.kafka</groupId>
+            <artifactId>kafka-jca-api</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.kafka</groupId>

@@ -7,9 +7,5 @@
 <f:view>
     <h:outputLabel value="Hello, world"/>
 </f:view>
-<h:dataTable value="#{driverUpdateSessionBean.savedDriver}" var="driver">
-    <h:outputText value="#{driver.driverFirstName}">
-
-    </h:outputText>
-</h:dataTable>
+<p> #{kafkaMDB.savedDriver.get(0).driverFirstName} </p>
 </html>
