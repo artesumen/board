@@ -1,8 +1,8 @@
-package config;
+package consumer;
 
 
 import converter.FromJsonToDtoConverter;
-import dto.DriverDTO;
+import dto.DriverStatusDTO;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -28,6 +28,7 @@ import java.util.Properties;
 //        @ActivationConfigProperty(propertyName = "useSynchMode", propertyValue = "true")
 //})
 @Named
+//@Stateless
 //@ResourceAdapter(value="kafka")
 //@Singleton
 public class KafkaMDB {
@@ -35,7 +36,7 @@ public class KafkaMDB {
     private final static String TOPIC = "test";
     private final static String BOOTSTRAP_SERVERS = "localhost:9092";
 
-    private List<DriverDTO> savedDriver = new ArrayList<>();
+    private List<DriverStatusDTO> savedDriver = new ArrayList<>();
 
     private Consumer<Long, String> createConsumer() {
         final Properties props = new Properties();
@@ -68,7 +69,7 @@ public class KafkaMDB {
 
 
         while (true) {
-            final ConsumerRecords<Long, String> consumerRecords = consumer.poll(100);
+            final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1);
             if (consumerRecords.count()==0) {
                 noRecordsCount++;
                 if (noRecordsCount > giveUp) break;
@@ -87,7 +88,7 @@ public class KafkaMDB {
 
             for (ConsumerRecord<Long, String> consumerRecord : consumerRecords) {
                 try {
-                    savedDriver.add(FromJsonToDtoConverter.convertToDriverDto(consumerRecord.value()));
+                    savedDriver.add(FromJsonToDtoConverter.convertToDriverStatusDto(consumerRecord.value()));
 //                return FromJsonToDtoConverter.convertToDriverDto(consumerRecord.value());
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -97,7 +98,7 @@ public class KafkaMDB {
         consumer.close();
     }
 
-    public List<DriverDTO> getSavedDriver() {
+    public List<DriverStatusDTO> getSavedDriver() {
         findMessageAndPass();
         return savedDriver;
     }

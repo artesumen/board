@@ -2,10 +2,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
 <f:view>
     <h:outputLabel value="Hello, world"/>
 </f:view>
-<p> #{kafkaMDB.savedDriver.get(0).driverFirstName} </p>
+<h:dataTable>
+    <h:column>
+        <f:facet name="header">Total Drivers</f:facet>
+        <!-- row record -->
+        <p>#{kafkaMDB.savedDriver.get(0).totalDrivers}</p>
+    </h:column>
+
+
+    <h:column>
+        <f:facet name="header">Rest Drivers</f:facet>
+        <!-- row record -->
+        #{kafkaMDB.savedDriver.get(0).driversOnRest}
+    </h:column>
+
+    <h:column>
+        <f:facet name="header">Busy Drivers</f:facet>
+        <!-- row record -->
+        #{kafkaMDB.savedDriver.get(0).totalDrivers}-#{kafkaMDB.savedDriver.get(0).driversOnRest}
+    </h:column>
+
+
+</h:dataTable>
+
+<p>#{kafkaMDB.savedDriver.get(0).totalDrivers}</p>
 </html>

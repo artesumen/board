@@ -1,14 +1,15 @@
 package converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dto.DriverDTO;
+import dto.DriverStatusDTO;
 
 import java.io.IOException;
 
 public class FromJsonToDtoConverter {
-    public static DriverDTO convertToDriverDto(String driverJSON) throws IOException {
+
+    public static DriverStatusDTO convertToDriverStatusDto(String driverJSON) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        DriverDTO driverDTO = mapper.readValue(driverJSON,DriverDTO.class);
-        return driverDTO;
+        DriverStatusDTO status = mapper.readValue(driverJSON,DriverStatusDTO.class);
+        return status;
     }
 }
