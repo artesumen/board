@@ -15,7 +15,7 @@
             websocket.onopen = function() {
                 displayStatus('Open');
                 document.getElementById('sayHello').disabled = false;
-                displayMessage('Connection is now open. Type a name and click Say Hello to send a message.');
+                 displayMessage('Connection is now open. Type a name and click Say Hello to send a message.');
             };
             websocket.onmessage = function(event) {
                 // log the event

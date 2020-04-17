@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+>
+
+<head>
+    <script type="text/javascript">
+
+        function listen() {
+
+            var baseUri = window.location.href;     // Returns full URL
+            console.log(baseUri);
+            wsUri = baseUri.concat('test').concat("/");
+            wsUri = wsUri.replace("http", "ws");
+            console.log(wsUri);
+
+            var kafkaSocket = new WebSocket(wsUri);
+
+            kafkaSocket.onopen = function () {
+                console.log('Connected!');
+                // kafkaSocket.send('Ping'); // Send the message 'Ping' to the server
+            };
+            kafkaSocket.onmessage = function (event) {
+                // console.log(event.data);
+                window.location.reload();
+            };
+        }
+        //
+        //
+        // function sendMessage() {
+        //     if (websocket !== null) {
+        //         var content = document.getElementById('savedDriver');
+        //         websocket.send(content);
+        //     } else {
+        //         displayMessage('WebSocket connection is not established. Please click the Open Connection button.', 'error');
+        //     }
+        // }
+
+        listen();
+
+
+
+    </script>
+
+
+</head>
+<body>
+<div>
+    <table>
+        <tr id='savedDriver'>#{kafkaMDB.savedDriver.get(0).totalDrivers}</tr>
+        <tr id='savedDrive1'>#{kafkaMDB.message}</tr>
+
+    </table>
+</div>
+</body>
+
+
+</html>
