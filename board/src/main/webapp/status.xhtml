@@ -26,19 +26,8 @@
                 window.location.reload();
             };
         }
-        //
-        //
-        // function sendMessage() {
-        //     if (websocket !== null) {
-        //         var content = document.getElementById('savedDriver');
-        //         websocket.send(content);
-        //     } else {
-        //         displayMessage('WebSocket connection is not established. Please click the Open Connection button.', 'error');
-        //     }
-        // }
 
         listen();
-
 
 
     </script>
@@ -46,11 +35,40 @@
 
 </head>
 <body>
-<div>
+<div id="driversTable">
     <table>
-        <tr id='savedDriver'>#{kafkaMDB.savedDriver.get(0).totalDrivers}</tr>
-        <tr id='savedDrive1'>#{kafkaMDB.message}</tr>
+        <thead>
+        <tr>
+            <th scope="col">Total Drivers</th>
+            <th scope="col">Rest Drivers</th>
+        </tr>
+        <tr>
+            <td>#{kafkaMDB.driverStatus.totalDrivers}</td>
+            <td>#{kafkaMDB.driverStatus.driversOnRest}</td>
+        </tr>
 
+        </thead>
+    </table>
+</div>
+
+<div id="trucksTable">
+    <table>
+        <thead>
+        <tr>
+            <th scope="col">Total Trucks</th>
+            <th scope="col">Broken trucks</th>
+            <th scope="col">Rest trucks</th>
+
+        </tr>
+        <tr>
+            <td>#{kafkaMDB.truckStatus.totalTrucksNumber}</td>
+            <td>#{kafkaMDB.truckStatus.totalBrokenNumber}</td>
+            <td>#{kafkaMDB.truckStatus.totalRestNumber}</td>
+
+        </tr>
+
+
+        </thead>
     </table>
 </div>
 </body>

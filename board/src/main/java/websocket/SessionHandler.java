@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
-
 public class SessionHandler {
 
     @Getter

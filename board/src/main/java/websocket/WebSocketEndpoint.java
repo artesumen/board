@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
 
 @ServerEndpoint("/{topic}/")
 public class WebSocketEndpoint {
@@ -19,8 +18,8 @@ public class WebSocketEndpoint {
 //    private Session session;
 
     @OnMessage
-    public void onServerMessage(Session session,String message) throws IOException {
-        session.getBasicRemote().sendText(message);
+    public void onServerMessage(Session session,String message){
+            session.getAsyncRemote().sendText(message);
     }
 
 
@@ -35,6 +34,7 @@ public class WebSocketEndpoint {
     @OnClose
     public void close(Session peer) {
         peers.remove(peer);
+//        sessionHandler.removeSession(peer);
         System.out.println("Peer " + peer.getId() + " left");
     }
 
