@@ -23,27 +23,12 @@ import java.util.Properties;
 
 
 @Named
-//@ApplicationScoped
 @Singleton
 @AccessTimeout(value=10000)
-//@Stateless
-//@ResourceAdapter(value="kafka")
-//@RequestScoped
 public class KafkaMDB implements Serializable {
-
-//    @Inject
-//    private WebSocketEndpoint webSocket;
-
-//    @Inject
-//    private SessionHandler sessionHandler;
-//
-//    @Inject
-//    private Peers peers;
 
     @Inject
     private WebSocketService socketService;
-
-
 
     private final static String TOPIC = "test";
     private final static String BOOTSTRAP_SERVERS = "localhost:9092";
@@ -53,10 +38,6 @@ public class KafkaMDB implements Serializable {
     private DriverStatusDTO driverStatus;
 
     private TruckStatusDTO truckStatus;
-
-//    private List<DriverStatusDTO> driverStatusDTOS = new ArrayList<>();
-
-//    private List<TruckStatusDTO> truckStatusDTOS = new ArrayList<>();
 
 
     @PostConstruct
@@ -93,28 +74,11 @@ public class KafkaMDB implements Serializable {
                 if (noRecordsCount > giveUp) break;
                 else continue;
             }
-//            consumerRecords.forEach(record -> {
-//                System.out.printf("Consumer Record:(%s, %d, %d)\n",
-//                        record.value(),
-//                        record.partition(), record.offset());
-//            });
-//            consumer.commitAsync();
             for (ConsumerRecord<Long, String> consumerRecord : consumerRecords) {
                 if (consumerRecord.value().contains("totalDrivers")) {
                     if (FromJsonToDtoConverter.convertToDriverStatusDto(consumerRecord.value()) != null) {
                         driverStatus = FromJsonToDtoConverter.convertToDriverStatusDto(consumerRecord.value());
-//                        if(!peers.peers().isEmpty()){
-//                            for(Session peer:peers.peers()){
-//                                for(Session session: peer.getOpenSessions()){
-//                                    webSocket.onServerMessage(session,consumerRecord.value());
-//                                }
-//                            }
                             socketService.broadcast(consumerRecord.value());
-//                            webSocket.onServerMessage(peers.peers().get(0), consumerRecord.value());
-//                            System.out.println("message sent to client ws");
-//                        }else{
-//                            System.out.println("no session for websocket");
-//                        }
                         consumer.commitAsync();
                     }
 
@@ -123,74 +87,14 @@ public class KafkaMDB implements Serializable {
 
                         truckStatus = FromJsonToDtoConverter.convertToTruckStatusDto(consumerRecord.value());
                         consumer.commitAsync();
-//                        if(!peers.peers().isEmpty()){
-//                            for(Session peer:peers.peers()){
-//                                for(Session session: peer.getOpenSessions()){
-//                                    webSocket.onServerMessage(session,consumerRecord.value());
-//                                }
-//                            }
                             socketService.broadcast(consumerRecord.value());
-//                            webSocket.onServerMessage(peers.peers().get(0), consumerRecord.value());
-//                            System.out.println("message sent to client ws");
-//                        }else{
-//                            System.out.println("no session for websocket");
-//                        }
                     }
-
                 }
-
                 System.out.println("Event  " + consumerRecord.value() + " fired.....");
-//                return FromJsonToDtoConverter.convertToDriverDto(consumerRecord.value());
-
             }
         }
-
     }
 
-
-    //    @OnRecord( topics={"test"})
-//    @PostConstruct
-//    public void findMessageAndPass() {
-//        final int giveUp = 100;
-//        int noRecordsCount = 0;
-//
-//        while (true) {
-//            final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1);
-//            if (consumerRecords.count() == 0) {
-//                noRecordsCount++;
-//                if (noRecordsCount > giveUp) break;
-//                else continue;
-//            }
-//
-//
-//            consumerRecords.forEach(record -> {
-//                System.out.printf("Consumer Record:(%s, %d, %d)\n",
-//                        record.value(),
-//                        record.partition(), record.offset());
-//            });
-//
-//            consumer.commitAsync();
-//
-//
-//            for (ConsumerRecord<Long, String> consumerRecord : consumerRecords) {
-//                try {
-//                    if (!savedDriver.isEmpty()) {
-//                        savedDriver.clear();
-//                    }
-//                    if (FromJsonToDtoConverter.convertToDriverStatusDto(consumerRecord.value()) != null) {
-//                        savedDriver.add(FromJsonToDtoConverter.convertToDriverStatusDto(consumerRecord.value()));
-//                        webSocket.onServerMessage(sessionHandler.getSessions().get(0),consumerRecord.value());
-//                    }
-//                    System.out.println("Event  " + consumerRecord.value() + " fired.....");
-////                return FromJsonToDtoConverter.convertToDriverDto(consumerRecord.value());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-////        consumer.close();
-//    }
 
     private long getCurrentOffset() {
         TopicPartition topicPartition = new TopicPartition(TOPIC, 1);
@@ -198,7 +102,6 @@ public class KafkaMDB implements Serializable {
         consumer.seekToEnd(Collections.singletonList(topicPartition));
         return consumer.position(topicPartition) - 1;
     }
-
 
     public DriverStatusDTO getDriverStatus() {
         if (driverStatus == null) {
@@ -208,11 +111,9 @@ public class KafkaMDB implements Serializable {
     }
 
     public TruckStatusDTO getTruckStatus() {
-
         if (truckStatus == null) {
             truckStatus = new TruckStatusDTO();//change to lastOffset for 1st ON
         }
-
         return truckStatus;
     }
 }
