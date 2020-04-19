@@ -8,14 +8,15 @@ import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import websocket.SessionHandler;
-import websocket.WebSocketEndpoint;
+import websocket.WebSocketService;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.AccessTimeout;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Properties;
@@ -24,16 +25,23 @@ import java.util.Properties;
 @Named
 //@ApplicationScoped
 @Singleton
+@AccessTimeout(value=10000)
 //@Stateless
 //@ResourceAdapter(value="kafka")
 //@RequestScoped
 public class KafkaMDB implements Serializable {
 
-    @Inject
-    private WebSocketEndpoint webSocket;
+//    @Inject
+//    private WebSocketEndpoint webSocket;
+
+//    @Inject
+//    private SessionHandler sessionHandler;
+//
+//    @Inject
+//    private Peers peers;
 
     @Inject
-    private SessionHandler sessionHandler;
+    private WebSocketService socketService;
 
 
 
@@ -74,7 +82,7 @@ public class KafkaMDB implements Serializable {
     }
 
     @Schedule(second = "*/5", minute = "*", hour = "*", persistent = false)
-    public void consume() {
+    public void consume() throws IOException {
         final int giveUp = 100;
         int noRecordsCount = 0;
 
@@ -85,23 +93,29 @@ public class KafkaMDB implements Serializable {
                 if (noRecordsCount > giveUp) break;
                 else continue;
             }
-            consumerRecords.forEach(record -> {
-                System.out.printf("Consumer Record:(%s, %d, %d)\n",
-                        record.value(),
-                        record.partition(), record.offset());
-            });
-            consumer.commitAsync();
+//            consumerRecords.forEach(record -> {
+//                System.out.printf("Consumer Record:(%s, %d, %d)\n",
+//                        record.value(),
+//                        record.partition(), record.offset());
+//            });
+//            consumer.commitAsync();
             for (ConsumerRecord<Long, String> consumerRecord : consumerRecords) {
                 if (consumerRecord.value().contains("totalDrivers")) {
                     if (FromJsonToDtoConverter.convertToDriverStatusDto(consumerRecord.value()) != null) {
                         driverStatus = FromJsonToDtoConverter.convertToDriverStatusDto(consumerRecord.value());
-                        if(!sessionHandler.getSessions().isEmpty()){
-                            webSocket.onServerMessage(sessionHandler.getSessions().get(0), consumerRecord.value());
-                        }else{
-                            System.out.println("no session for websocket");
-                        }
+//                        if(!peers.peers().isEmpty()){
+//                            for(Session peer:peers.peers()){
+//                                for(Session session: peer.getOpenSessions()){
+//                                    webSocket.onServerMessage(session,consumerRecord.value());
+//                                }
+//                            }
+                            socketService.broadcast(consumerRecord.value());
+//                            webSocket.onServerMessage(peers.peers().get(0), consumerRecord.value());
+//                            System.out.println("message sent to client ws");
+//                        }else{
+//                            System.out.println("no session for websocket");
+//                        }
                         consumer.commitAsync();
-                        break;
                     }
 
                 } else if (consumerRecord.value().contains("totalTrucksNumber")) {
@@ -109,12 +123,18 @@ public class KafkaMDB implements Serializable {
 
                         truckStatus = FromJsonToDtoConverter.convertToTruckStatusDto(consumerRecord.value());
                         consumer.commitAsync();
-                        if(!sessionHandler.getSessions().isEmpty()){
-                            webSocket.onServerMessage(sessionHandler.getSessions().get(0), consumerRecord.value());
-                        }else{
-                            System.out.println("no session for websocket");
-                        }
-                        break;
+//                        if(!peers.peers().isEmpty()){
+//                            for(Session peer:peers.peers()){
+//                                for(Session session: peer.getOpenSessions()){
+//                                    webSocket.onServerMessage(session,consumerRecord.value());
+//                                }
+//                            }
+                            socketService.broadcast(consumerRecord.value());
+//                            webSocket.onServerMessage(peers.peers().get(0), consumerRecord.value());
+//                            System.out.println("message sent to client ws");
+//                        }else{
+//                            System.out.println("no session for websocket");
+//                        }
                     }
 
                 }

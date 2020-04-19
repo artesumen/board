@@ -6,16 +6,23 @@
 
 <head>
     <script type="text/javascript">
+        var baseUri = window.location.href;
+        wsUri = baseUri.concat('test').concat("/");
+        wsUri = wsUri.replace("http", "ws");
+        var kafkaSocket=null;
+
+
+
 
         function listen() {
 
-            var baseUri = window.location.href;     // Returns full URL
-            console.log(baseUri);
-            wsUri = baseUri.concat('test').concat("/");
-            wsUri = wsUri.replace("http", "ws");
-            console.log(wsUri);
+            // var baseUri = window.location.href;     // Returns full URL
+            // console.log(baseUri);
+            // wsUri = baseUri.concat('test').concat("/");
+            // wsUri = wsUri.replace("http", "ws");
+            // console.log(wsUri);
 
-            var kafkaSocket = new WebSocket(wsUri);
+            kafkaSocket = new WebSocket(wsUri);
 
             kafkaSocket.onopen = function () {
                 console.log('Connected!');
@@ -27,14 +34,16 @@
             };
         }
 
-        listen();
-
+        // listen();
+        function closeConnection() {
+            kafkaSocket.close();
+        }
 
     </script>
 
 
 </head>
-<body>
+<body onload="listen();" onunload="closeConnection();">
 <div id="driversTable">
     <table>
         <thead>
