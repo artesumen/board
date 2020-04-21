@@ -1,13 +1,15 @@
 package converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import dto.BoardOrderStatusDTO;
 import dto.DriverStatusDTO;
 import dto.TruckStatusDTO;
 
 import java.io.IOException;
+import java.util.List;
 
 public class FromJsonToDtoConverter {
-
 
     public static DriverStatusDTO convertToDriverStatusDto(String driverJSON){
         ObjectMapper mapper = new ObjectMapper();
@@ -31,5 +33,20 @@ public class FromJsonToDtoConverter {
         return status;
     }
 
+    public static List<BoardOrderStatusDTO> convertToOrderStatusList(String jsonArray){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            CollectionType javaType = mapper.getTypeFactory()
+                    .constructCollectionType(List.class, BoardOrderStatusDTO.class);
+            List<BoardOrderStatusDTO> lastStatus = mapper.readValue(jsonArray,javaType);
 
+            for(BoardOrderStatusDTO orderStatus:lastStatus){
+                System.out.println("parsed : " + orderStatus.getDrivers().toString());
+            }
+            return lastStatus;
+        } catch (IOException e) {
+            throw new RuntimeException("convert to OrderStatusDTO IOException");
+        }
+
+    }
 }

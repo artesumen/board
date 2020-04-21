@@ -14,8 +14,6 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Properties;
 
-
-
 @Singleton
 public class KafkaConsumer{
 
@@ -55,26 +53,4 @@ public class KafkaConsumer{
         consumerService.getMessageAndWriteToFile(consumer.poll(1));
         System.out.println("consume done");
     }
-
-
-//    private long getCurrentOffset() {
-//        TopicPartition topicPartition = new TopicPartition(TOPIC, 1);
-//        consumer.poll(0);
-//        consumer.seekToEnd(Collections.singletonList(topicPartition));
-//        return consumer.position(topicPartition) - 1;
-//    }
-//
-//    public DriverStatusDTO getDriverStatus() {
-//        if (driverStatus == null) {
-//            driverStatus= new DriverStatusDTO();//change to lastOffset for 1st ON
-//        }
-//        return driverStatus;
-//    }
-//
-//    public TruckStatusDTO getTruckStatus() {
-//        if (truckStatus == null) {
-//            truckStatus = new TruckStatusDTO();//change to lastOffset for 1st ON
-//        }
-//        return truckStatus;
-//    }
 }

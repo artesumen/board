@@ -1,9 +1,9 @@
 package service;
 
 import converter.FromJsonToDtoConverter;
+import dto.BoardOrderStatusDTO;
 import dto.DriverStatusDTO;
 import dto.TruckStatusDTO;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 
@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 
 @Named
@@ -25,7 +26,7 @@ public class ConsumerService {
     @Inject
     private WebSocketService socketService;
 
-    private Consumer<Long, String> consumer;
+    private List<BoardOrderStatusDTO> orderStatus;
 
     private DriverStatusDTO driverStatus;
 
@@ -68,11 +69,39 @@ public class ConsumerService {
                         e.printStackTrace();
                     }
                     setTruckStatusFromFile();
+                } else if(consumerRecord.value().contains("orderId")) {
+                    try(FileWriter writer = new FileWriter("C:\\Users\\Admin\\Desktop\\Java" +
+                            "\\Java school board\\board\\src\\main\\" +
+                            "resources\\META-INF\\orderStatus.txt")){
+                        writer.write(consumerRecord.value());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    setOrderStatusFromFile();
+
                 }
                 System.out.println("Event  " + consumerRecord.value() + " offset " + consumerRecord.offset() + " fired.....");
             }
             break;
         }
+    }
+
+    private void setOrderStatusFromFile() {
+        try(FileReader reader = new FileReader("C:\\Users\\Admin\\Desktop\\Java" +
+            "\\Java school board\\board\\src\\main\\" +
+            "resources\\META-INF\\orderStatus.txt");BufferedReader bufReader = new BufferedReader(reader)){
+            String statusJSON = bufReader.readLine();
+            List<BoardOrderStatusDTO> statusList = FromJsonToDtoConverter.convertToOrderStatusList(statusJSON);
+            orderStatus=statusList;
+            socketService.broadcast(statusJSON);
+
+
+        }catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("JSON from file reading problems - orderStatus");
+        }
+
     }
 
     private void setDriverStatusFromFile(){
@@ -85,7 +114,7 @@ public class ConsumerService {
             socketService.broadcast(statusJSON);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("JSON from file reading problems");
+            throw new RuntimeException("JSON from file reading problems - driverStatus");
         }
 
     }
@@ -100,7 +129,7 @@ public class ConsumerService {
             truckStatus = lastTruckStatus;
             socketService.broadcast(statusJSON);
         }catch (IOException e) {
-            throw new RuntimeException("JSON from file reading problems");
+            throw new RuntimeException("JSON from file reading problems - truckStatus");
         }
     }
 
@@ -131,6 +160,21 @@ public class ConsumerService {
         }
     }
 
+
+    private List<BoardOrderStatusDTO> getLastOrderStatus(){
+        try(FileReader reader = new FileReader("C:\\Users\\Admin\\Desktop\\Java" +
+                "\\Java school board\\board\\src\\main\\" +
+                "resources\\META-INF\\orderStatus.txt");BufferedReader bufReader = new BufferedReader(reader)){
+            String statusJSON = bufReader.readLine();
+            List<BoardOrderStatusDTO>lastOrderStatus = FromJsonToDtoConverter.convertToOrderStatusList(statusJSON);
+            return lastOrderStatus;
+
+
+        }catch (IOException e) {
+            throw new RuntimeException("JSON from file reading problems");
+        }
+    }
+
     public DriverStatusDTO getDriverStatus() {
         if (driverStatus == null) {
             driverStatus = getLastDriverStatus();
@@ -143,5 +187,12 @@ public class ConsumerService {
             truckStatus = getLastTruckStatus();
         }
         return truckStatus;
+    }
+
+    public List<BoardOrderStatusDTO> getOrderStatus() {
+        if(orderStatus == null){
+            orderStatus = getLastOrderStatus();
+        }
+        return orderStatus;
     }
 }

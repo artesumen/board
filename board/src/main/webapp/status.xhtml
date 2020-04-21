@@ -2,6 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
 >
 
 <head>
@@ -9,9 +11,7 @@
         var baseUri = window.location.href;
         wsUri = baseUri.concat('test').concat("/");
         wsUri = wsUri.replace("http", "ws");
-        var kafkaSocket=null;
-
-
+        var kafkaSocket = null;
 
 
         function listen() {
@@ -44,6 +44,46 @@
 
 </head>
 <body onload="listen();" onunload="closeConnection();">
+<div id="ordersTable">
+    <h:dataTable value="#{consumerService.orderStatus}" var="order">
+
+        <h:column>
+            <f:facet name="header">Order Id</f:facet>
+            #{order.orderId}
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">Drivers</f:facet>
+
+            #{order.drivers.size() eq 0? "no drivers assigned" : order.drivers}
+
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">Is Order Comleted</f:facet>
+            #{order.completed ? "Completed" : "Not completed"}
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">Truck</f:facet>
+
+            #{order.truck == null ? "no trucks assigned" : order.truck}
+
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">Total points on route</f:facet>
+            #{order.numOfPointsTotal}
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">Completed points</f:facet>
+            #{order.numOfCompletedPoints}
+        </h:column>
+    </h:dataTable>
+</div>
+
+
 <div id="driversTable">
     <table>
         <thead>
