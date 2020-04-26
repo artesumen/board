@@ -3,10 +3,11 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
 >
 
-<head>
+<h:head>
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>-->
     <script type="text/javascript">
         var baseUri = window.location.href;
         wsUri = baseUri.concat('test').concat("/");
@@ -15,18 +16,10 @@
 
 
         function listen() {
-
-            // var baseUri = window.location.href;     // Returns full URL
-            // console.log(baseUri);
-            // wsUri = baseUri.concat('test').concat("/");
-            // wsUri = wsUri.replace("http", "ws");
-            // console.log(wsUri);
-
             kafkaSocket = new WebSocket(wsUri);
 
             kafkaSocket.onopen = function () {
                 console.log('Connected!');
-                // kafkaSocket.send('Ping'); // Send the message 'Ping' to the server
             };
             kafkaSocket.onmessage = function (event) {
                 // console.log(event.data);
@@ -34,7 +27,6 @@
             };
         }
 
-        // listen();
         function closeConnection() {
             kafkaSocket.close();
         }
@@ -42,85 +34,83 @@
     </script>
 
 
-</head>
-<body onload="listen();" onunload="closeConnection();">
-<div id="ordersTable">
-    <h:dataTable value="#{consumerService.orderStatus}" var="order">
+</h:head>
+<h:body onload="listen();" onunload="closeConnection();">
+<!--<div id="ordersTable">-->
+    <h1 align="center">Orders</h1>
+    <p:dataTable style="font-size:12px;" value="#{consumerService.orderStatus}" var="order">
 
-        <h:column>
-            <f:facet name="header">Order Id</f:facet>
-            #{order.orderId}
-        </h:column>
+        <p:column headerText="Order Id">
+<!--            <f:facet name="header">Order Id</f:facet>-->
+            <h:outputText value="#{order.orderId}"/>
+        </p:column>
 
-        <h:column>
-            <f:facet name="header">Drivers</f:facet>
+        <p:column headerText="Drivers">
+<!--            <f:facet name="header">Drivers</f:facet>-->
+            <h:outputText value="#{order.drivers.size() eq 0? 'no drivers assigned' : order.drivers}"/>
+        </p:column>
 
-            #{order.drivers.size() eq 0? "no drivers assigned" : order.drivers}
+        <p:column headerText="Is Order Completed?">
+<!--            <f:facet name="header">Is Order Comleted</f:facet>-->
+            <h:outputText value="#{order.completed ? 'Completed' : 'Not completed'}"/>
 
-        </h:column>
+        </p:column>
 
-        <h:column>
-            <f:facet name="header">Is Order Comleted</f:facet>
-            #{order.completed ? "Completed" : "Not completed"}
-        </h:column>
+        <p:column headerText="Truck">
+<!--            <f:facet name="header">Truck</f:facet>-->
+            <h:outputText value="#{order.truck == null ? 'no trucks assigned' : order.truck}"/>
+        </p:column>
 
-        <h:column>
-            <f:facet name="header">Truck</f:facet>
+        <p:column headerText="Total points on route">
+<!--            <f:facet name="header">Total points on route</f:facet>-->
+            <h:outputText value="#{order.numOfPointsTotal}"/>
+        </p:column>
 
-            #{order.truck == null ? "no trucks assigned" : order.truck}
-
-        </h:column>
-
-        <h:column>
-            <f:facet name="header">Total points on route</f:facet>
-            #{order.numOfPointsTotal}
-        </h:column>
-
-        <h:column>
-            <f:facet name="header">Completed points</f:facet>
-            #{order.numOfCompletedPoints}
-        </h:column>
-    </h:dataTable>
-</div>
+        <p:column headerText="Completed Points" >
+<!--            <f:facet name="header">Completed points</f:facet>-->
+            <h:outputText value="#{order.numOfCompletedPoints}"/>
+        </p:column>
+    </p:dataTable>
+<!--</div>-->
 
 
-<div id="driversTable">
-    <table>
-        <thead>
-        <tr>
-            <th scope="col">Total Drivers</th>
-            <th scope="col">Rest Drivers</th>
-        </tr>
-        <tr>
-            <td>#{consumerService.driverStatus.totalDrivers}</td>
-            <td>#{consumerService.driverStatus.driversOnRest}</td>
-        </tr>
+<!--<div id="driversTable">-->
+    <h1 align="center" style="margin-bottom: 15px">Drivers</h1>
+    <p:dataTable style="font-size:12px;" value="#{consumerService.driverStatus}" var="driverStatus">
+        <p:column headerText="Total drivers">
+            <h:outputText value="#{driverStatus.totalDrivers}">
 
-        </thead>
-    </table>
-</div>
+            </h:outputText>
+        </p:column>
+        <p:column headerText="Rest Drivers">
+            <h:outputText value="#{driverStatus.driversOnRest}">
 
-<div id="trucksTable">
-    <table>
-        <thead>
-        <tr>
-            <th scope="col">Total Trucks</th>
-            <th scope="col">Broken trucks</th>
-            <th scope="col">Rest trucks</th>
+            </h:outputText>
+        </p:column>
+    </p:dataTable>
+<!--</div>-->
 
-        </tr>
-        <tr>
-            <td>#{consumerService.truckStatus.totalTrucksNumber}</td>
-            <td>#{consumerService.truckStatus.totalBrokenNumber}</td>
-            <td>#{consumerService.truckStatus.totalRestNumber}</td>
+<!--<div id="trucksTable">-->
+    <h1 align="center" style="margin-bottom: 15px">Trucks</h1>
+    <p:dataTable style="font-size:12px;" value="#{consumerService.truckStatus}" var="truckStatus">
+        <p:column headerText="Total Trucks">
+            <h:outputText value="#{truckStatus.totalTrucksNumber}">
 
-        </tr>
+            </h:outputText>
+        </p:column>
+        <p:column headerText="Broken trucks">
+            <h:outputText value="#{truckStatus.totalBrokenNumber}">
 
+            </h:outputText>
+        </p:column>
+        <p:column  headerText="Rest trucks">
+            <h:outputText value="#{truckStatus.totalRestNumber}">
 
-        </thead>
-    </table>
-</div>
-</body>
+            </h:outputText>
+        </p:column>
+    </p:dataTable>
+<!--</div>-->
+</h:body>
 
 
 </html>

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-@Named
+@Named("consumerService")
 @Singleton
 @AccessTimeout(value = 7000)
 public class ConsumerService {
@@ -181,6 +181,20 @@ public class ConsumerService {
         }
         return driverStatus;
     }
+
+    public Long getTotalTrucksNumber(){
+        return getTruckStatus().getTotalTrucksNumber();
+    }
+
+    public Long getRestTrucksNumber(){
+        return getTruckStatus().getTotalRestNumber();
+    }
+
+    public Long getBrokenTrucksNumber(){
+        return getTruckStatus().getTotalBrokenNumber();
+    }
+
+
 
     public TruckStatusDTO getTruckStatus() {
         if (truckStatus == null) {
