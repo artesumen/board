@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class BoardOrderStatusDTO {
+public final class BoardOrderStatusDTO {
     private Integer orderId;
     private boolean completed;
     private List<String> drivers;

@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class DriverStatusDTO {
+public final class DriverStatusDTO {
     Long totalDrivers;
     Long driversOnRest;
 }

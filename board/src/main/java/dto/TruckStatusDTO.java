@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class TruckStatusDTO {
+public final class TruckStatusDTO {
     Long totalTrucksNumber;
     Long totalBrokenNumber;
     Long totalRestNumber;

@@ -22,7 +22,6 @@ public class KafkaConsumer{
 
     private final static String TOPIC = "test";
     private final static String BOOTSTRAP_SERVERS = "localhost:9092";
-
     private Consumer<Long, String> consumer;
 
 
@@ -41,8 +40,6 @@ public class KafkaConsumer{
         consumer = new org.apache.kafka.clients.consumer.KafkaConsumer<>(props);
         // Subscribe to the topic.
         consumer.subscribe(Collections.singletonList(TOPIC));
-
-        System.out.println("post-construct method outside loop working!");
     }
 
     public KafkaConsumer() {
@@ -51,6 +48,5 @@ public class KafkaConsumer{
     @Schedule(second = "*/2", minute = "*", hour = "*", persistent = false)
     public void consume(){
         consumerService.getMessageAndWriteToFile(consumer.poll(1));
-        System.out.println("consume done");
     }
 }
