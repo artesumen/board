@@ -14,7 +14,6 @@ import java.util.List;
 @Stateless
 public class RestClient {
     private static final String DRIVER_URI = "http://localhost:8085/rest/driverStatus";
-
     private static final String TRUCK_URI = "http://localhost:8085/rest/truckStatus";
     private static final String ORDER_URI = "http://localhost:8085/rest/orderStatus";
 

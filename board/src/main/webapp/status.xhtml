@@ -4,16 +4,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
 >
 
 <h:head>
+
+    <title><ui:insert name="title">Dashboard</ui:insert></title>
 
     <script type="text/javascript">
         var baseUri = window.location.href;
         wsUri = baseUri.concat('test').concat("/");
         wsUri = wsUri.replace("http", "ws");
         var kafkaSocket = null;
-
 
         function listen() {
             kafkaSocket = new WebSocket(wsUri);

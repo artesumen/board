@@ -1,1 +1,1 @@
-{"totalDrivers":8,"driversOnRest":3}
+{"totalDrivers":7,"driversOnRest":2}

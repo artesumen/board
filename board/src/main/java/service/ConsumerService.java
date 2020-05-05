@@ -43,7 +43,7 @@ public class ConsumerService {
                 else continue;
             }
             for (ConsumerRecord<Long, String> consumerRecord : consumerRecords) {
-                if (consumerRecord.value().contains("drivers")) {
+                if (consumerRecord.value().contains("driver")) {
                     try (FileWriter writer = new FileWriter("C:\\Users\\Admin\\Desktop\\Java" +
                             "\\Java school board\\board\\src\\main\\" +
                             "resources\\META-INF\\driverStatus.txt")) {
