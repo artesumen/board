@@ -1,1 +1,0 @@
-{"totalTrucksNumber":18,"totalBrokenNumber":2,"totalRestNumber":10}

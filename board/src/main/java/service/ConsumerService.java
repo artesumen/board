@@ -13,8 +13,6 @@ import javax.ejb.AccessTimeout;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -44,50 +42,24 @@ public class ConsumerService {
             }
             for (ConsumerRecord<Long, String> consumerRecord : consumerRecords) {
                 if (consumerRecord.value().contains("driver")) {
-                    try (FileWriter writer = new FileWriter("C:\\Users\\Admin\\Desktop\\Java" +
-                            "\\Java school board\\board\\src\\main\\" +
-                            "resources\\META-INF\\driverStatus.txt")) {
-
-                        driverStatus = client.getDriverStatus();
-                        LOG.info("TOTAL DRIVERS"+driverStatus.getTotalDrivers());
-                        writer.write(mapper.writeValueAsString(driverStatus));
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    driverStatus = client.getDriverStatus();
                     socketService.broadcast("driver updated");
+                    LOG.info("TOTAL DRIVERS" + driverStatus.getTotalDrivers());
 
                 } else if (consumerRecord.value().contains("trucks")) {
-
-                    try (FileWriter writer = new FileWriter("C:\\Users\\Admin\\Desktop\\Java" +
-                            "\\Java school board\\board\\src\\main\\" +
-                            "resources\\META-INF\\truckStatus.txt")) {
-                        truckStatus = client.getTruckStatus();
-                        LOG.info("TOTAL TRUCKS"+truckStatus.getTotalTrucksNumber());
-                        writer.write(mapper.writeValueAsString(truckStatus));
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    truckStatus = client.getTruckStatus();
                     socketService.broadcast("truck updated");
-                } else if(consumerRecord.value().contains("orders")) {
-                    try(FileWriter writer = new FileWriter("C:\\Users\\Admin\\Desktop\\Java" +
-                            "\\Java school board\\board\\src\\main\\" +
-                            "resources\\META-INF\\orderStatus.txt")){
-                        orderStatus= client.getOrderStatus();
-                        LOG.info("TOTAL ORDERS"+orderStatus.size());
-                        writer.write(mapper.writeValueAsString(orderStatus));
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    LOG.info("TOTAL TRUCKS" + truckStatus.getTotalTrucksNumber());
+                } else if (consumerRecord.value().contains("orders")) {
+                    orderStatus = client.getOrderStatus();
                     socketService.broadcast("order updated");
-
+                    LOG.info("TOTAL ORDERS" + orderStatus.size());
                 }
                 LOG.info("Event  " + consumerRecord.value() + " offset " + consumerRecord.offset() + " fired.....");
             }
             break;
         }
+
     }
 
     public DriverStatusDTO getDriverStatus() {
@@ -97,18 +69,17 @@ public class ConsumerService {
         return driverStatus;
     }
 
-    public Long getTotalTrucksNumber(){
+    public Long getTotalTrucksNumber() {
         return getTruckStatus().getTotalTrucksNumber();
     }
 
-    public Long getRestTrucksNumber(){
+    public Long getRestTrucksNumber() {
         return getTruckStatus().getTotalRestNumber();
     }
 
-    public Long getBrokenTrucksNumber(){
+    public Long getBrokenTrucksNumber() {
         return getTruckStatus().getTotalBrokenNumber();
     }
-
 
 
     public TruckStatusDTO getTruckStatus() {
@@ -119,7 +90,7 @@ public class ConsumerService {
     }
 
     public List<BoardOrderStatusDTO> getOrderStatus() {
-        if(orderStatus == null){
+        if (orderStatus == null) {
             orderStatus = client.getOrderStatus();
         }
         return orderStatus;
